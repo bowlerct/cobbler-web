@@ -1,11 +1,28 @@
 import {Injectable} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import * as xmlrpc from 'typescript-xmlrpc';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CobblerApiService {
 
-  constructor() {
+  private apiService: xmlrpc.AngularXmlrpcService;
+
+  constructor(private http: HttpClient) {
+    this.apiService = new xmlrpc.AngularXmlrpcService(http);
+  }
+
+  setServiceURL(url: string): void {
+    this.apiService.configureService(new URL(url));
+  }
+
+  getVersion(): any {
+    this.apiService.methodCall('version') .subscribe((data) => {
+      // TODO: Handle HTTP Errors
+      console.log(data);
+      return data;
+    });
   }
 
   // TODO: Specify return type
@@ -880,6 +897,7 @@ export class CobblerApiService {
 
   // TODO: Specify return type & specify + type arg
   login(token: string): void {
+    // FIXME use mock service here
     throw new Error('This is not yet implemented');
   }
 

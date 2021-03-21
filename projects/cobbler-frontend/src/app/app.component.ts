@@ -1,8 +1,7 @@
-import {Component, Injectable, OnInit} from '@angular/core';
-import * as xmlrpc from 'typescript-xmlrpc';
+import {APP_ID, Component, Injectable, OnInit} from '@angular/core';
 
 import { Router, NavigationEnd } from '@angular/router';
-import {HttpClient} from '@angular/common/http';
+import { CobblerApiService } from 'cobbler-api';
 
 
 @Component({
@@ -16,14 +15,7 @@ export class AppComponent implements OnInit {
     loggedin: false,
   };
 
-  constructor(private router: Router, private http: HttpClient) {
-    const service = new xmlrpc.AngularXmlrpcService(http);
-    service.configureService(new URL('http://localhost/cobbler_api'));
-    service.methodCall('version').subscribe((data) => {
-      // TODO: Handle HTTP Errors
-      console.log(data);
-    });
-  }
+  constructor(private router: Router, private api: CobblerApiService) { }
 
   ngOnInit(): void {
     const storage = window.sessionStorage.getItem('loggedIn');
@@ -32,6 +24,16 @@ export class AppComponent implements OnInit {
       this.userStatus.loggedin = boolvalue;
       window.localStorage.userStatus = this.userStatus;
     }
+
+    const apiURL: string = window.sessionStorage.getItem('cobblerApi');
+    if (apiURL){
+       this.api.setServiceURL(apiURL);
+    } else {
+      // FIXME - pull url from app global settings instead of hard reference
+      this.api.setServiceURL('http://localhost/cobbler_api');
+    }
+
+    console.log(this.api.getVersion());
     /*
      * Do we want it to scroll to top on every component change?
      * component change/select from menu: scroll to top?
