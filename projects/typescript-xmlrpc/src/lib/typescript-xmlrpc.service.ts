@@ -10,7 +10,7 @@ import {map} from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class AngularXmlrpcService {
+class AngularXmlrpcService {
   private readonly http: HttpClient;
   private url: URL;
   private headers: any;
@@ -72,3 +72,5 @@ export class AngularXmlrpcService {
     );
   }
 }
+
+export {AngularXmlrpcService, MethodFault, MethodResponse};

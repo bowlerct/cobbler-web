@@ -1,28 +1,24 @@
 import {Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import * as xmlrpc from 'typescript-xmlrpc';
+import { AngularXmlrpcService as xmlrpc, MethodFault, MethodResponse }  from 'typescript-xmlrpc';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CobblerApiService {
-
-  private apiService: xmlrpc.AngularXmlrpcService;
+class CobblerApiService {
+  private apiService: xmlrpc;
 
   constructor(private http: HttpClient) {
-    this.apiService = new xmlrpc.AngularXmlrpcService(http);
+    this.apiService = new xmlrpc(http);
   }
 
   setServiceURL(url: string): void {
     this.apiService.configureService(new URL(url));
   }
 
-  getVersion(): any {
-    this.apiService.methodCall('version') .subscribe((data) => {
-      // TODO: Handle HTTP Errors
-      console.log(data);
-      return data;
-    });
+  getVersion(): Observable<MethodResponse | MethodFault> {
+     return this.apiService.methodCall('version');
   }
 
   // TODO: Specify return type
@@ -961,3 +957,5 @@ export class CobblerApiService {
     throw new Error('This is not yet implemented');
   }
 }
+
+export {CobblerApiService, MethodFault, MethodResponse};

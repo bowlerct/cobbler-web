@@ -1,7 +1,7 @@
 import {APP_ID, Component, Injectable, OnInit} from '@angular/core';
 
 import { Router, NavigationEnd } from '@angular/router';
-import { CobblerApiService } from 'cobbler-api';
+import { CobblerApiService, MethodFault, MethodResponse } from 'cobbler-api';
 
 
 @Component({
@@ -33,7 +33,20 @@ export class AppComponent implements OnInit {
       this.api.setServiceURL('http://localhost/cobbler_api');
     }
 
-    console.log(this.api.getVersion());
+    this.api.getVersion().subscribe(
+      data => {
+        // next
+        console.log(data);
+      },
+      err => {
+        // error
+        console.log("Error caught at cobbler-api: " + err);
+      },
+      () => {
+        // completion only if no errors occurred
+        console.log("Completed api version call");
+      });
+
     /*
      * Do we want it to scroll to top on every component change?
      * component change/select from menu: scroll to top?
